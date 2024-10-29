@@ -164,16 +164,16 @@ docker compose up -d
 clear
 
 # Show completion message
-echo " _____                                 _       _   "
-echo "/  ___|                               (_)     | |  "
-echo "\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
-echo " \`--. \ '_ \ / _ \/ _\` | '__| '_ \` _ \| | '_ \| __|"
-echo "/\__/ / |_) |  __/ (_| | |  | | | | | | | | | | |_ "
-echo "\____/| .__/ \___|\__,_|_|  |_| |_| |_|_|_| |_|\__|"
-echo "      | |                                          "
-echo "      |_|                                          "
+echo -e "\e[92m _____                                 _       _   "
+echo -e "\e[92m/  ___|                               (_)     | |  "
+echo -e "\e[92m\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
+echo -e "\e[92m \`--. \ '_ \ / _ \/ _\` | '__| '_ \` _ \| | '_ \| __|"
+echo -e "\e[92m/\__/ / |_) |  __/ (_| | |  | | | | | | | | | | |_ "
+echo -e "\e[92m\____/| .__/ \___|\__,_|_|  |_| |_| |_|_|_| |_|\__|"
+echo -e "\e[92m      | |                                          "
+echo -e "\e[92m      |_|                                          \e[0m"
 echo "#####################################################################"
-echo "#       Congrats! Peppermint is now installed on your server!       #"
+echo -e "#       \e[1mCongrats! Peppermint is now installed on your server!\e[0m       #"
 echo "#####################################################################"
 echo
 echo "Domain: $MAIN_DOMAIN"
@@ -183,7 +183,5 @@ echo
 echo "Spearmint Website: https://spearmint.sh"
 echo "Spearmint Support: https://spearmint.sh/discord"
 echo "Peppermint Discord: https://discord.gg/rhYDuSeeag"
-echo
-echo "#####################################################################"
-echo "#        Thank you for using the Spearmint script by SydMae!        #"
-echo "#####################################################################"
+echo ""
+echo -e "You can see the credits for this script by running \e[27mspearmint credits\e[27m!"
