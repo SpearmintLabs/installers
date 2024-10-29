@@ -57,28 +57,27 @@ fi
 
 # Docker Installation Steps
 echo "Removing old/conflicting Docker packages..."
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
-    apt-get remove -y $pkg
-done
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
 # Install prerequisites
 echo "Installing prerequisites for Docker..."
+apt-get update
 apt-get install -y ca-certificates curl
 
-# Add Docker's official GPG key and repository
-echo "Setting up Docker's repository..."
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | tee /etc/apt/keyrings/docker.asc
-chmod a+r /etc/apt/keyrings/docker.asc
+# Add Docker's Official GPC key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.as
 
-echo "Adding Docker repository..."
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Add repo to apt srcs
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
 
-# Update and install Docker
-echo "Updating and installing Docker..."
-apt-get update
-apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Install latest docker version
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Confirm Docker installation
 docker --version
@@ -100,7 +99,9 @@ sed -i "s|1001:5003|5003:5003|g" docker-compose.yml
 
 # Install NGINX and configure firewall
 apt install -y nginx
-ufw allow 'Nginx Full'
+sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+sudo iptables-save | sudo tee /etc/iptables/rules.v4
 
 # Create NGINX client proxy config
 cat <<EOF > /etc/nginx/conf.d/peppermint-client.conf
