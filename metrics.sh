@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root."
+    exit 1
+fi
+
+apt install -y net-tools
+
 # Collect OS information
 os_info=$(uname -a)
 
