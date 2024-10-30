@@ -5,10 +5,19 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS_NAME=$(echo "$ID" | tr '[:upper:]' '[:lower:]')
+    OS_VERSION_ID=$(echo "$VERSION_ID" | cut -d. -f1)
+else
+    echo "Unable to detect operating system. Exiting."
+    exit 1
+fi
+
 apt install -y net-tools
 
 # Collect OS information
-os_info=$(uname -a)
+os_info="${OS_NAME} ${OS_VERSION_ID}"
 
 # Collect System Specs
 cpu_info=$(lscpu)
