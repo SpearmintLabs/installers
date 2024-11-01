@@ -155,7 +155,7 @@ EOF
 # Restart NGINX
 systemctl restart nginx
 
-clear
+# REMOVE ME # REMOVE ME clear
 echo "#####################################################################"
 echo "#                 Installing Certbot Dependencies~                  #"
 echo "#####################################################################"
@@ -170,7 +170,7 @@ sudo /opt/certbot/bin/pip install --upgrade pip
 sudo /opt/certbot/bin/pip install certbot certbot-nginx
 ln -s /opt/certbot/bin/certbot /usr/bin/certbot
 
-clear
+# REMOVE ME # REMOVE ME clear
 echo "#####################################################################"
 echo "#           Setting up SSL certificates for your domains!           #"
 echo "#####################################################################"
@@ -182,7 +182,7 @@ certbot --nginx --non-interactive --agree-tos -d $MAIN_DOMAIN -d $API_DOMAIN -m 
 # Set up Certbot auto-renewal
 echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | tee -a /etc/crontab > /dev/null
 
-clear
+# REMOVE ME # REMOVE ME clear
 echo "#####################################################################"
 echo "#             Downloading & Starting Docker containers.             #"
 echo "#####################################################################"
@@ -191,7 +191,7 @@ echo ""
 echo ""
 docker compose up -d
 
-clear
+# REMOVE ME # REMOVE ME clear
 echo -e "\e[92m _____                                 _       _   "
 echo -e "\e[92m/  ___|                               (_)     | |  "
 echo -e "\e[92m\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
