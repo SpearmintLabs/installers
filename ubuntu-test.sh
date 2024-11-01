@@ -35,7 +35,7 @@ read -p "Enter SECRET (press Enter to auto-generate): " SECRET
 SECRET=${SECRET:-$(openssl rand -hex 16)}
 read -p "Enter POSTGRES_PASSWORD (press Enter to auto-generate): " POSTGRES_PASSWORD
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(openssl rand -hex 16)}
-read -p "Do you want the containers to be updated automatically or manually when a new version is released: " AUTO_UPDATE
+read -p "Do you want the containers to be updated automatically or manually when a new version is released (automatic/manual): " AUTO_UPDATE
 
 # Check if domain is pointed to server IP
 echo "Checking domain DNS settings..."
@@ -82,10 +82,10 @@ mkdir -p /srv/peppermint
 cd /srv/peppermint
 
 if [ "$AUTO_UPDATE" == "manual" ]; then
-    wget https://deploy.spearmint.com/manual/docker-compose.yml
-    wget htptps://deploy.spearmint.com/manual/diun.yml
+    wget https://deploy.spearmint.sh/manual/docker-compose.yml
+    wget htptps://deploy.spearmint.sh/manual/diun.yml
 else
-    wget https://deploy.spearmint.com/auto/docker-compose.yml
+    wget https://deploy.spearmint.sh/auto/docker-compose.yml
 fi
 
 # Replace variables in docker-compose.yml
@@ -146,6 +146,13 @@ EOF
 # Restart NGINX
 systemctl restart nginx
 
+echo "#####################################################################"
+echo "#                 Installing Certbot Dependencies~                  #"
+echo "#####################################################################"
+echo ""
+echo ""
+echo ""
+
 # Install Certbot and dependencies
 apt install -y python3 python3-venv libaugeas0
 python3 -m venv /opt/certbot/
@@ -153,9 +160,8 @@ sudo /opt/certbot/bin/pip install --upgrade pip
 sudo /opt/certbot/bin/pip install certbot certbot-nginx
 ln -s /opt/certbot/bin/certbot /usr/bin/certbot
 
-clear
 echo "#####################################################################"
-echo "#         User Intervention Required! SSL Setup via CertBot         #"
+echo "#           Setting up SSL certificates for your domains!           #"
 echo "#####################################################################"
 echo ""
 echo ""
@@ -166,8 +172,6 @@ certbot --nginx --non-interactive --agree-tos -d $MAIN_DOMAIN -d $API_DOMAIN -m 
 echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | tee -a /etc/crontab > /dev/null
 
 docker compose up -d
-
-clear
 
 # Show completion message
 echo -e "\e[92m _____                                 _       _   "
