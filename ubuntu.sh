@@ -22,18 +22,20 @@ if [[ "$OS_NAME" != "ubuntu" ]]; then
 fi
 
 # Check if deployment file exists
-if [ ! -f "/srv/peppermint/sprmnt.txt" ]; then
-    echo "Deployment file sprmnt.txt not found in /srv/peppermint."
+if [ ! -f "/srv/spearmint/sprmnt.txt" ]; then
+    echo "Deployment file sprmnt.txt not found in /srv/spearmint."
     exit 1
 fi
 
 # Prompt for user input
 read -p "Enter Main Domain: " MAIN_DOMAIN
 read -p "Enter API Domain: " API_DOMAIN
+read -p "Enter the a valid email for SSL: " SSL_EMAIL
 read -p "Enter SECRET (press Enter to auto-generate): " SECRET
 SECRET=${SECRET:-$(openssl rand -hex 16)}
 read -p "Enter POSTGRES_PASSWORD (press Enter to auto-generate): " POSTGRES_PASSWORD
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-$(openssl rand -hex 16)}
+read -p "Do you want the containers to be updated automatically or manually when a new version is released (automatic/manual): " AUTO_UPDATE
 
 # Check if domain is pointed to server IP
 echo "Checking domain DNS settings..."
@@ -76,9 +78,20 @@ docker --version
 docker compose version
 
 # Set up Peppermint directory and download docker-compose file
-mkdir -p /srv/peppermint
-cd /srv/peppermint
-wget https://raw.githubusercontent.com/Peppermint-Lab/Peppermint/master/docker-compose.yml
+mkdir -p /srv/spearmint
+cd /srv/spearmint
+
+wget https://i.spearmint.sh/utilities/prettifier.sh
+chmod +x prettifier.sh
+
+if [ "$AUTO_UPDATE" == "manual" ]; then
+    wget https://deploy.spearmint.sh/manual/docker-compose.yml
+    wget https://deploy.spearmint.sh/manual/diun.yml
+    touch diun.key
+else
+    wget https://deploy.spearmint.sh/auto/docker-compose.yml
+    touch watchtower.key
+fi
 
 # Replace variables in docker-compose.yml
 sed -i "s|MAIN_DOMAIN|$MAIN_DOMAIN|g" docker-compose.yml
@@ -86,8 +99,6 @@ sed -i "s|API_DOMAIN|$API_DOMAIN|g" docker-compose.yml
 sed -i "s|POSTGRES_PASSWORD: .*|POSTGRES_PASSWORD: $POSTGRES_PASSWORD|g" docker-compose.yml
 sed -i "s|SECRET: .*|SECRET: $SECRET|g" docker-compose.yml
 sed -i "s|DB_PASSWORD: .*|DB_PASSWORD: $POSTGRES_PASSWORD|g" docker-compose.yml
-sed -i "s|1000:3000|3000:3000|g" docker-compose.yml
-sed -i "s|1001:5003|5003:5003|g" docker-compose.yml
 
 # Install NGINX and configure firewall
 apt install -y nginx
@@ -140,6 +151,14 @@ EOF
 # Restart NGINX
 systemctl restart nginx
 
+clear
+echo "#####################################################################"
+echo "#                 Installing Certbot Dependencies~                  #"
+echo "#####################################################################"
+echo ""
+echo ""
+echo ""
+
 # Install Certbot and dependencies
 apt install -y python3 python3-venv libaugeas0
 python3 -m venv /opt/certbot/
@@ -149,21 +168,26 @@ ln -s /opt/certbot/bin/certbot /usr/bin/certbot
 
 clear
 echo "#####################################################################"
-echo "#         User Intervention Required! SSL Setup via CertBot         #"
+echo "#           Setting up SSL certificates for your domains!           #"
 echo "#####################################################################"
 echo ""
 echo ""
 echo ""
-certbot --nginx
+certbot --nginx --non-interactive --agree-tos -d $MAIN_DOMAIN -d $API_DOMAIN -m $SSL_EMAIL
 
 # Set up Certbot auto-renewal
 echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | tee -a /etc/crontab > /dev/null
 
+clear
+echo "#####################################################################"
+echo "#             Downloading & Starting Docker containers.             #"
+echo "#####################################################################"
+echo ""
+echo ""
+echo ""
 docker compose up -d
 
 clear
-
-# Show completion message
 echo -e "\e[92m _____                                 _       _   "
 echo -e "\e[92m/  ___|                               (_)     | |  "
 echo -e "\e[92m\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
@@ -176,12 +200,25 @@ echo "#####################################################################"
 echo -e "#       \e[1mCongrats! Peppermint is now installed on your server!\e[0m       #"
 echo "#####################################################################"
 echo
-echo "Domain: $MAIN_DOMAIN"
+echo "Domain: https://$MAIN_DOMAIN"
 echo "Username: admin@admin.com"
 echo "Password: 1234"
 echo
 echo "Spearmint Website: https://spearmint.sh"
-echo "Spearmint Support: https://spearmint.sh/discord"
 echo "Peppermint Discord: https://discord.gg/rhYDuSeeag"
 echo ""
+
+if [ -f /srv/spearmint/diun.key ]; then
+    echo "Please configure Diun by using spearmint diun"
+elif [ -f /srv/spearmint/watchtower.key ]; then
+    echo "Watchtower is now up!"
+else
+    echo "Installer Error! Please contact sydmae on Discord! Code: NO_AUTOUPDATE_CONT"
+fi
+
+echo ""
 echo -e "You can see the credits for this script by running \e[27mspearmint credits\e[27m!"
+echo ""
+echo ""
+
+spearmint status
