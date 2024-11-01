@@ -194,4 +194,18 @@ echo "Spearmint Website: https://spearmint.sh"
 echo "Spearmint Support: https://spearmint.sh/discord"
 echo "Peppermint Discord: https://discord.gg/rhYDuSeeag"
 echo ""
+echo ""
+echo ""
+
+if [ -f diun.key ]; then
+    X_command
+elif [ -f watchtower.key ]; then
+    Y_command
+else
+    echo "Installer Error! Please contact sydmae on Discord! Code: NO_AUTOUPDATE_CONT"
+fi
+
+echo ""
+echo ""
+echo ""
 echo -e "You can see the credits for this script by running \e[27mspearmint credits\e[27m!"

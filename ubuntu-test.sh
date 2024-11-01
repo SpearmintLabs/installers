@@ -87,8 +87,10 @@ chmod +x prettifier.sh
 if [ "$AUTO_UPDATE" == "manual" ]; then
     wget https://deploy.spearmint.sh/manual/docker-compose.yml
     wget https://deploy.spearmint.sh/manual/diun.yml
+    touch diun.key
 else
     wget https://deploy.spearmint.sh/auto/docker-compose.yml
+    touch watchtower.key
 fi
 
 # Replace variables in docker-compose.yml
@@ -206,4 +208,22 @@ echo "Spearmint Website: https://spearmint.sh"
 echo "Spearmint Support: https://spearmint.sh/discord"
 echo "Peppermint Discord: https://discord.gg/rhYDuSeeag"
 echo ""
-echo -e "You can see the credits for this script by running \e[92mspearmint credits\e[0m!"
+echo ""
+echo ""
+
+if [ -f /srv/spearmint/diun.key ]; then
+    echo "Please configure Diun by using spearmint diun"
+elif [ -f /srv/spearmint/watchtower.key ]; then
+    echo "Watchtower is now up!"
+else
+    echo "Installer Error! Please contact sydmae on Discord! Code: NO_AUTOUPDATE_CONT"
+fi
+
+echo ""
+echo ""
+echo ""
+echo -e "You can see the credits for this script by running \e[27mspearmint credits\e[27m!"
+echo ""
+echo ""
+
+spearmint status
