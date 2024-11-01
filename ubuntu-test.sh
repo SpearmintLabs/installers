@@ -86,7 +86,7 @@ chmod +x prettifier.sh
 
 if [ "$AUTO_UPDATE" == "manual" ]; then
     wget https://deploy.spearmint.sh/manual/docker-compose.yml
-    wget htptps://deploy.spearmint.sh/manual/diun.yml
+    wget wget https://deploy.spearmint.sh/manual/diun.yml
 else
     wget https://deploy.spearmint.sh/auto/docker-compose.yml
 fi
