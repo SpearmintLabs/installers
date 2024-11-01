@@ -22,8 +22,8 @@ if [[ "$OS_NAME" != "ubuntu" ]]; then
 fi
 
 # Check if deployment file exists
-if [ ! -f "/srv/peppermint/sprmnt.txt" ]; then
-    echo "Deployment file sprmnt.txt not found in /srv/peppermint."
+if [ ! -f "/srv/spearmint/sprmnt.txt" ]; then
+    echo "Deployment file sprmnt.txt not found in /srv/spearmint."
     exit 1
 fi
 
@@ -78,8 +78,11 @@ docker --version
 docker compose version
 
 # Set up Peppermint directory and download docker-compose file
-mkdir -p /srv/peppermint
-cd /srv/peppermint
+mkdir -p /srv/spearmint
+cd /srv/spearmint
+
+wget https://i.spearmint.sh/utilities/prettifier.sh
+chmod +x prettifier.sh
 
 if [ "$AUTO_UPDATE" == "manual" ]; then
     wget https://deploy.spearmint.sh/manual/docker-compose.yml
@@ -146,6 +149,7 @@ EOF
 # Restart NGINX
 systemctl restart nginx
 
+clear
 echo "#####################################################################"
 echo "#                 Installing Certbot Dependencies~                  #"
 echo "#####################################################################"
@@ -159,7 +163,9 @@ python3 -m venv /opt/certbot/
 sudo /opt/certbot/bin/pip install --upgrade pip
 sudo /opt/certbot/bin/pip install certbot certbot-nginx
 ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+pip install docker-pretty-ps
 
+clear
 echo "#####################################################################"
 echo "#           Setting up SSL certificates for your domains!           #"
 echo "#####################################################################"
@@ -171,6 +177,13 @@ certbot --nginx --non-interactive --agree-tos -d $MAIN_DOMAIN -d $API_DOMAIN -m 
 # Set up Certbot auto-renewal
 echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | tee -a /etc/crontab > /dev/null
 
+clear
+echo "#####################################################################"
+echo "#             Downloading & Starting Docker containers.             #"
+echo "#####################################################################"
+echo ""
+echo ""
+echo ""
 docker compose up -d
 
 # Show completion message
