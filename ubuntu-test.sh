@@ -163,7 +163,6 @@ python3 -m venv /opt/certbot/
 sudo /opt/certbot/bin/pip install --upgrade pip
 sudo /opt/certbot/bin/pip install certbot certbot-nginx
 ln -s /opt/certbot/bin/certbot /usr/bin/certbot
-pip install docker-pretty-ps
 
 clear
 echo "#####################################################################"
@@ -186,7 +185,7 @@ echo ""
 echo ""
 docker compose up -d
 
-# Show completion message
+clear
 echo -e "\e[92m _____                                 _       _   "
 echo -e "\e[92m/  ___|                               (_)     | |  "
 echo -e "\e[92m\ \`--. _ __   ___  __ _ _ __ _ __ ___  _ _ __ | |_ "
@@ -199,7 +198,7 @@ echo "#####################################################################"
 echo -e "#       \e[1mCongrats! Peppermint is now installed on your server!\e[0m       #"
 echo "#####################################################################"
 echo
-echo "Domain: $MAIN_DOMAIN"
+echo "Domain: https://$MAIN_DOMAIN"
 echo "Username: admin@admin.com"
 echo "Password: 1234"
 echo
@@ -207,4 +206,4 @@ echo "Spearmint Website: https://spearmint.sh"
 echo "Spearmint Support: https://spearmint.sh/discord"
 echo "Peppermint Discord: https://discord.gg/rhYDuSeeag"
 echo ""
-echo -e "You can see the credits for this script by running \e[27mspearmint credits\e[27m!"
+echo -e "You can see the credits for this script by running \e[92mspearmint credits\e[0m!"
