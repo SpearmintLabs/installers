@@ -57,6 +57,12 @@ echo "Installing prerequisites for Docker..."
 apt-get update
 apt-get install -y ca-certificates curl
 
+# Firewall Rules
+apt install -y iptables
+sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+sudo iptables-save | sudo tee /etc/iptables/rules.v4
+
 # Add Docker's Official GPC key
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
@@ -70,7 +76,7 @@ echo \
 sudo apt-get update
 
 # Install latest docker version
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Confirm Docker installation
 docker --version
@@ -101,10 +107,6 @@ sed -i "s|DB_PASSWORD: .*|DB_PASSWORD: $POSTGRES_PASSWORD|g" docker-compose.yml
 
 # Install NGINX and configure firewall
 apt install -y nginx
-apt install -y iptables-nft
-sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
-sudo iptables -I INPUT -p tcp --dport 443 -j ACCEPT
-sudo iptables-save | sudo tee /etc/iptables/rules.v4
 
 # Create NGINX client proxy config
 cat <<EOF > /etc/nginx/conf.d/peppermint-client.conf
