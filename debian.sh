@@ -27,7 +27,19 @@ if [ ! -f "/srv/spearmint/sprmnt.txt" ]; then
     exit 1
 fi
 
-# Prompt for user input
+WIP=$(curl -s ifconfig.me)
+clear
+echo "#####################################################################"
+echo "#                      Lets get things set up!                      #"
+echo "#####################################################################"
+echo ""
+echo ""
+echo "         Please make sure your domains are pointed at $WIP!         "
+echo "Peppermint will not work out of the box if your domains are not set up!"
+echo "    Please ensure your records are 'A' records, not AAAA or SRV!    "
+echo ""
+echo ""
+echo ""
 read -p "Enter Main Domain: " MAIN_DOMAIN
 read -p "Enter API Domain: " API_DOMAIN
 read -p "Enter the a valid email for SSL: " SSL_EMAIL
